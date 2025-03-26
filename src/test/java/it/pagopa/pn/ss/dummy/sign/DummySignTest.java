@@ -3,7 +3,7 @@ package it.pagopa.pn.ss.dummy.sign;
 
 import it.pagopa.pn.library.exceptions.PnSpapiPermanentErrorException;
 import it.pagopa.pn.library.sign.pojo.PnSignDocumentResponse;
-import it.pagopa.pn.ss.dummy.sign.service.PnSignServiceImpl;
+import it.pagopa.pn.ss.dummy.sign.service.PnDummySignServiceImpl;
 import lombok.CustomLog;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +28,7 @@ import static it.pagopa.pn.ss.dummy.sign.pojo.SignatureFormat.*;
 public class DummySignTest {
 
     @SpyBean
-    private PnSignServiceImpl service;
+    private PnDummySignServiceImpl service;
 
     private static byte[] pdfBytes;
     private static byte[] xmlBytes;
@@ -99,7 +99,7 @@ public class DummySignTest {
                 Arguments.of(CADES, xmlBytes)
         );
     }
-    private static Mono<PnSignDocumentResponse> executeSign(PnSignServiceImpl service, byte[] docBytes, String signatureFormat, boolean timestamping) {
+    private static Mono<PnSignDocumentResponse> executeSign(PnDummySignServiceImpl service, byte[] docBytes, String signatureFormat, boolean timestamping) {
         return switch (signatureFormat) {
             case PADES -> service.signPdfDocument(docBytes, timestamping);
             case XADES -> service.signXmlDocument(docBytes, timestamping);

@@ -15,7 +15,7 @@ import java.util.UUID;
 @CustomLog
 @NoArgsConstructor
 @AllArgsConstructor
-public class PnSignServiceImpl implements PnSignService {
+public class PnDummySignServiceImpl implements PnSignService {
 
     private String apiEndpoint;
 
