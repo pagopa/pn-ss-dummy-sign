@@ -67,7 +67,7 @@ public class PnSignServiceImpl implements PnSignService {
         var requestId = UUID.randomUUID().toString();
         String message = "Dummy - Invoked [sign{}] request {} with params format={}, level={}, requestBody length: {} bytes.";
         log.info(message, format, requestId, format, level, fileBytes.length);
-        return DummyClient.sign(apiEndpoint, requestId, fileBytes, format, level);
+        return Mono.just(new PnSignDocumentResponse(fileBytes));
     }
 
 }
