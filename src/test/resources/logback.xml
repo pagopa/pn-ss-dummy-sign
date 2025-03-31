@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="it.pagopa.pn.library" level="debug" />
+    <logger name="it.pagopa.pn.ss.dummy" level="debug" />
 <!--    <logger name="reactor.netty.http" level="warn" />-->
     <root level="info">
         <appender-ref ref="CONSOLE" />
