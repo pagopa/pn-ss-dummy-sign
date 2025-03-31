@@ -7,7 +7,7 @@ import java.time.Duration;
 public class DummyPecUtils {
 
     private DummyPecUtils(){
-        throw new IllegalArgumentException("This is a Utility class");
+        throw new UnsupportedOperationException("This is a Utility class");
     }
 
     public static Duration delayElement(int fileSize,double baseDelay,double fileSizeScale,double minScaling,double maxScaling) {
