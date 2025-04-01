@@ -5,19 +5,27 @@ import it.pagopa.pn.library.exceptions.PnSpapiPermanentErrorException;
 import it.pagopa.pn.library.sign.pojo.PnSignDocumentResponse;
 import it.pagopa.pn.ss.dummy.sign.pojo.SignatureFormat;
 import it.pagopa.pn.library.sign.service.PnSignService;
-import lombok.AllArgsConstructor;
 import lombok.CustomLog;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+import static it.pagopa.pn.ss.dummy.sign.util.DummyPecUtils.delayElement;
+
 @CustomLog
 @NoArgsConstructor
-@AllArgsConstructor
 public class PnDummySignServiceImpl implements PnSignService {
 
-    private String apiEndpoint;
+    @Value("${dummy.sign.base-delay:100}")
+    private double baseDelay;
+    @Value("${dummy.sign.file-size-scale:1000}")
+    private double fileSizeScale;
+    @Value("${dummy.sign.min-scaling:1}")
+    private double minScaling;
+    @Value("${dummy.sign.max-scaling:1.5}")
+    private double maxScaling;
 
     /**
      * Sign a PDF document with PAdES format
@@ -59,15 +67,16 @@ public class PnDummySignServiceImpl implements PnSignService {
      * @param fileBytes the document to sign
      * @return a {@link PnSignDocumentResponse} with the signed document
      */
-    private Mono<PnSignDocumentResponse> applySignature(String format, Boolean timestamping, byte[] fileBytes) {
-        if(fileBytes == null || fileBytes.length == 0) {
-            return Mono.error(new PnSpapiPermanentErrorException("fileBytes cannot be null or empty"));
+    private Mono<PnSignDocumentResponse> applySignature(SignatureFormat format, boolean timestamping, byte[] fileBytes) {
+        if (fileBytes == null || fileBytes.length == 0) {
+            return Mono.delay(delayElement(baseDelay, maxScaling))
+                    .then(Mono.error(new PnSpapiPermanentErrorException("fileBytes cannot be null or empty")));
         }
-        String level = timestamping ? SignatureLevel.TIMESTAMP : SignatureLevel.BASIC;
+        String level = timestamping ? SignatureLevel.TIMESTAMP.getValue() : SignatureLevel.BASIC.getValue();
         var requestId = UUID.randomUUID().toString();
         String message = "Dummy - Invoked [sign{}] request {} with params format={}, level={}, requestBody length: {} bytes.";
         log.info(message, format, requestId, format, level, fileBytes.length);
-        return Mono.just(new PnSignDocumentResponse(fileBytes));
+        return Mono.delay(delayElement(fileBytes.length, baseDelay, fileSizeScale, minScaling, maxScaling)).then(Mono.just(new PnSignDocumentResponse(fileBytes)));
     }
 
 }

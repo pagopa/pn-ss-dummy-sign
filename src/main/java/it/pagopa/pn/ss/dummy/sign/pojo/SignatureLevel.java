@@ -1,6 +1,17 @@
 package it.pagopa.pn.ss.dummy.sign.pojo;
 
-public interface SignatureLevel {
-    String BASIC = "BES";
-    String TIMESTAMP = "T";
+
+import lombok.Getter;
+
+@Getter
+public enum SignatureLevel {
+    BASIC("BES"),
+    TIMESTAMP("T");
+
+    private final String value;
+
+    SignatureLevel(String value) {
+        this.value = value;
+    }
+
 }
